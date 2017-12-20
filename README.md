@@ -14,11 +14,11 @@ mvn clean package
 
 Run:
 
-java -jar app-name.jar -Dspring.profiles.active=dev (default)
+java -jar app-name.jar --spring.config.location=./application.properties
 
-java -jar app-name.jar -Dspring.profiles.active=test
+java -jar app-name.jar --spring.config.location=./application.properties
 
-java -jar app-name.jar -Dspring.profiles.active=production
+java -jar app-name.jar --spring.config.location=./application.properties
 
 
 
