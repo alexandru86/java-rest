@@ -1,0 +1,66 @@
+#!/bin/bash
+
+JAVA_VERSION="1.8.0"
+APPLICATION_PACKAGE=gs-rest-service-0.2.0.jar
+ENVIRONMENT=$1
+
+echo "Installing Java OpenJDK..."
+yum list installed | grep java > /dev/null 2>&1
+if [ $? -eq 0 ]
+then
+  echo "Already installed"
+else 
+  sudo yum -y install java-$JAVA_VERSION > /dev/null 2>&1
+fi
+echo "Done with Java"
+
+echo "Installing wget"
+yum list installed | grep wget > /dev/null 2>&1
+if [ $? -eq 0 ]
+then
+  echo "Already installed"
+else
+  sudo yum -y install wget > /dev/null 2>&1
+fi
+echo "Done with wget"
+
+echo "Removing old application package"
+rm /opt/gs-rest-service-*.jar
+
+
+echo "Downloading JAR file"
+wget http://192.168.56.15:8081/repository/maven-releases/org/springframework/gs-rest-service/0.2.0/$APPLICATION_PACKAGE  > /dev/null 2>&1
+sudo mv $APPLICATION_PACKAGE /opt
+echo "Creating systemd file for application..."
+
+sudo sh -c "echo '[Unit]
+Description=Docker Application Container Engine
+Documentation=http://docs.docker.io
+
+[Service]
+ExecStart=/usr/bin/java -jar /opt/$APPLICATION_PACKAGE --spring.config.location=/opt/application.properties
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target' > /etc/systemd/system/application.service"
+
+echo "Create properties file"
+sed -i -e "s/\${value}/$ENVIRONMENT/" application.properties.template
+sudo cp application.properties.template /opt/application.properties
+
+echo "Enable and start application"
+sudo systemctl daemon-reload
+sudo systemctl stop application
+sudo systemctl enable application
+sudo systemctl start application
+
+echo "Done"
+
+
+
+
+
+
+
+
