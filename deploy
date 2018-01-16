@@ -29,7 +29,7 @@ rm /opt/gs-rest-service-*.jar
 
 
 echo "Downloading JAR file"
-wget http://192.168.56.15:8081/repository/maven-releases/org/springframework/gs-rest-service/0.2.0/$APPLICATION_PACKAGE  > /dev/null 2>&1
+wget http://nexus:8081/repository/maven-releases/org/springframework/gs-rest-service/0.2.0/$APPLICATION_PACKAGE  > /dev/null 2>&1
 sudo mv $APPLICATION_PACKAGE /opt
 echo "Creating systemd file for application..."
 
@@ -56,11 +56,3 @@ sudo systemctl enable application
 sudo systemctl start application
 
 echo "Done"
-
-
-
-
-
-
-
-
